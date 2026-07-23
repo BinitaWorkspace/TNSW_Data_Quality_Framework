@@ -1,0 +1,10 @@
+oracledb
+pandas
+pytest
+python-dotenv
+pyyaml
+loguru
+jinja2
+pytest-html
+openpyxl
+
