@@ -1,0 +1,75 @@
+database:
+  schema: TFNSW_TEST
+
+tables:
+  - PASSENGER
+  - TRIP
+  - BOOKING
+  - STATION
+
+
+row_count_checks:
+  - PASSENGER
+  - TRIP
+  - BOOKING
+  - STATION
+
+
+duplicate_checks:
+
+  - table: PASSENGER
+    column: PASSENGER_ID
+
+  - table: TRIP
+    column: TRIP_ID
+
+  - table: BOOKING
+    column: BOOKING_ID
+
+  - table: STATION
+    column: STATION_ID
+
+
+null_checks:
+
+  - table: PASSENGER
+    column: PASSENGER_ID
+
+  - table: PASSENGER
+    column: EMAIL
+
+  - table: BOOKING
+    column: BOOKING_ID
+
+  - table: BOOKING
+    column: TICKET_PRICE
+
+  - table: TRIP
+    column: TRIP_ID
+
+  - table: STATION
+    column: STATION_ID
+
+
+relationship_checks:
+
+  - parent_table: TRIP
+    parent_column: TRIP_ID
+    child_table: BOOKING
+    child_column: TRIP_ID
+
+
+  - parent_table: PASSENGER
+    parent_column: PASSENGER_ID
+    child_table: BOOKING
+    child_column: PASSENGER_ID
+
+
+business_rules:
+
+  - table: BOOKING
+    rule: "TICKET_PRICE > 0"
+
+
+  - table: BOOKING
+    rule: "STATUS IN ('CONFIRMED','CANCELLED')"

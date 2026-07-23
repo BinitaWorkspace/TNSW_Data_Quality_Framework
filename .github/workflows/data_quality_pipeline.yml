@@ -1,0 +1,58 @@
+name: Data Quality Automation Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+  pull_request:
+    branches:
+      - main
+
+
+jobs:
+
+  data-quality-framework:
+
+    runs-on: ubuntu-latest
+
+
+    steps:
+
+      # 1. Get code
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+
+      # 2. Setup Python
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+
+      # 3. Install packages
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+
+      # 4. Run automated tests
+      - name: Run Pytest
+        run: |
+          pytest -v
+
+
+      # 5. Execute Data Quality Framework
+      - name: Run Data Quality Framework
+        run: |
+          python -m src.main
+
+
+      # 6. Upload generated reports
+      - name: Upload Data Quality Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: data-quality-report
+          path: reports/

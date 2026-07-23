@@ -1,3 +1,4 @@
+from src.utils.config_loader import load_config
 from src.connection.oracle_connection import get_connection
 from src.utils.logger import get_logger
 
@@ -35,21 +36,14 @@ def check_row_count(table_name):
 
 def validate_all_row_counts():
 
-    tables = [
-        "PASSENGER",
-        "TRIP",
-        "BOOKING",
-        "STATION"
-    ]
+    config = load_config()
+
+    tables = config["row_count_checks"]
 
     results = []
 
-    logger.info("Starting row count validation")
-
     for table in tables:
         results.append(check_row_count(table))
-
-    logger.info("Row count validation completed")
 
     return results
 

@@ -1,4 +1,9 @@
 from src.connection.oracle_connection import get_connection
+from src.utils.config_loader import load_config
+from src.utils.logger import get_logger
+
+
+logger = get_logger(__name__)
 
 
 def check_duplicate(table_name, column_name):
@@ -20,33 +25,30 @@ def check_duplicate(table_name, column_name):
     cursor.close()
     conn.close()
 
+
     if len(duplicates) == 0:
-        return f"PASS - No duplicate {table_name}.{column_name}"
+        return f"PASS - No duplicate {column_name} in {table_name}"
+
     else:
-        return f"FAIL - Duplicate {table_name}.{column_name} found: {duplicates}"
+        return f"FAIL - Duplicate {column_name}: {duplicates}"
+
 
 
 def validate_all_duplicates():
 
-    checks = [
-        ("PASSENGER", "PASSENGER_ID"),
-        ("TRIP", "TRIP_ID"),
-        ("BOOKING", "BOOKING_ID"),
-        ("STATION", "STATION_ID")
-    ]
+    config = load_config()
+
+    checks = config["duplicate_checks"]
 
     results = []
 
-    for table, column in checks:
-        result = check_duplicate(table, column)
-        results.append(result)
+    for check in checks:
+
+        table = check["table"]
+        column = check["column"]
+
+        results.append(
+            check_duplicate(table, column)
+        )
 
     return results
-
-
-if __name__ == "__main__":
-
-    results = validate_all_duplicates()
-
-    for result in results:
-        print(result)

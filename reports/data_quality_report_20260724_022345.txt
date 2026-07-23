@@ -1,0 +1,50 @@
+===== DATA QUALITY EXECUTION REPORT =====
+
+Validation : Schema Validation
+Result     : PASS - All expected tables exist
+--------------------------------------------------
+Validation : Row Count
+Result     : PASS - PASSENGER has 4 records
+--------------------------------------------------
+Validation : Row Count
+Result     : PASS - TRIP has 2 records
+--------------------------------------------------
+Validation : Row Count
+Result     : PASS - BOOKING has 2 records
+--------------------------------------------------
+Validation : Row Count
+Result     : PASS - STATION has 3 records
+--------------------------------------------------
+Validation : Duplicate Check
+Result     : PASS - No duplicate PASSENGER_ID in PASSENGER
+--------------------------------------------------
+Validation : Duplicate Check
+Result     : PASS - No duplicate TRIP_ID in TRIP
+--------------------------------------------------
+Validation : Duplicate Check
+Result     : PASS - No duplicate BOOKING_ID in BOOKING
+--------------------------------------------------
+Validation : Duplicate Check
+Result     : PASS - No duplicate STATION_ID in STATION
+--------------------------------------------------
+Validation : Null Check
+Result     : PASS - No NULL values in PASSENGER.PASSENGER_ID
+--------------------------------------------------
+Validation : Null Check
+Result     : PASS - No NULL values in BOOKING.BOOKING_ID
+--------------------------------------------------
+Validation : Null Check
+Result     : PASS - No NULL values in BOOKING.TICKET_PRICE
+--------------------------------------------------
+Validation : Null Check
+Result     : PASS - No NULL values in TRIP.TRIP_ID
+--------------------------------------------------
+Validation : Null Check
+Result     : PASS - No NULL values in STATION.STATION_ID
+--------------------------------------------------
+Validation : Relationship Check
+Result     : PASS
+--------------------------------------------------
+Validation : Business Rules
+Result     : PASS - All confirmed bookings have valid ticket prices
+--------------------------------------------------

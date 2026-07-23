@@ -1,39 +1,81 @@
-from datetime import datetime
 import os
+from datetime import datetime
+import pandas as pd
 
 
-def generate_report(results):
+def generate_reports(results):
 
-    os.makedirs("reports", exist_ok=True)
+    if not os.path.exists("reports"):
+        os.makedirs("reports")
 
-    file_name = (
-        f"reports/data_quality_report_"
-        f"{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
+
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+
+
+    excel_file = (
+        f"reports/data_quality_report_{timestamp}.xlsx"
     )
 
-    with open(file_name, "w") as report:
+    html_file = (
+        f"reports/data_quality_report_{timestamp}.html"
+    )
 
-        report.write("DATA QUALITY VALIDATION REPORT\n")
-        report.write("=" * 40)
-        report.write("\n")
-        report.write(
-            f"Execution Time: {datetime.now()}\n\n"
+
+    # Convert results to dataframe
+
+    df = pd.DataFrame(results)
+
+
+    # Excel Report
+
+    with pd.ExcelWriter(
+        excel_file,
+        engine="openpyxl"
+    ) as writer:
+
+        df.to_excel(
+            writer,
+            sheet_name="Validation Results",
+            index=False
         )
 
-        for result in results:
-            report.write(result)
-            report.write("\n")
 
-    print(f"Report generated: {file_name}")
+    # HTML Report
+
+    html_content = f"""
+    <html>
+
+    <head>
+        <title>Data Quality Report</title>
+    </head>
+
+    <body>
+
+    <h1>Oracle ATP Data Quality Report</h1>
+
+    <p>
+    Execution Time:
+    {datetime.now()}
+    </p>
+
+    {df.to_html(index=False)}
+
+    </body>
+
+    </html>
+    """
 
 
-if __name__ == "__main__":
+    with open(
+        html_file,
+        "w",
+        encoding="utf-8"
+    ) as file:
 
-    validation_results = [
-        "PASS - Tables exist",
-        "PASS - PASSENGER has 4 records",
-        "PASS - No duplicate booking IDs",
-        "FAIL - Confirmed booking 5003 has NULL ticket price"
-    ]
+        file.write(html_content)
 
-    generate_report(validation_results)
+
+    return {
+        "excel": excel_file,
+        "html": html_file
+    }
