@@ -1,0 +1,8 @@
+DATA QUALITY VALIDATION REPORT
+========================================
+Execution Time: 2026-07-24 00:06:30.168060
+
+PASS - Tables exist
+PASS - PASSENGER has 4 records
+PASS - No duplicate booking IDs
+FAIL - Confirmed booking 5003 has NULL ticket price
