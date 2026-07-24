@@ -1,9 +1,9 @@
-from src.connection.oracle_connection import get_connection
+from src.connection.destination_connection import get_destination_connection
 
 
 def validate_booking_trip_relationship():
 
-    conn = get_connection()
+    conn = get_destination_connection()
     cursor = conn.cursor()
 
     query = """

@@ -1,3 +1,5 @@
+import pytest
+
 from src.validation.source_target_count_validation import validate_row_count
 
 
@@ -8,7 +10,11 @@ tables = [
 ]
 
 
-for table in tables:
+@pytest.mark.parametrize(
+    "table",
+    tables
+)
+def test_source_target_row_count(table):
 
     result = validate_row_count(table)
 
@@ -30,3 +36,5 @@ for table in tables:
         "STATUS:",
         result["status"]
     )
+
+    assert result["status"] == "PASS"

@@ -1,4 +1,4 @@
-from src.connection.oracle_connection import get_connection
+from src.connection.destination_connection import get_destination_connection
 from src.utils.config_loader import load_config
 from src.utils.logger import get_logger
 
@@ -8,7 +8,7 @@ logger = get_logger(__name__)
 
 def check_duplicate(table_name, column_name):
 
-    conn = get_connection()
+    conn = get_destination_connection()
     cursor = conn.cursor()
 
     query = f"""

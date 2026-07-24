@@ -1,9 +1,9 @@
-from src.connection.oracle_connection import get_connection
 
+from src.connection.destination_connection import get_destination_connection
 
 def check_null_values(table_name, column_name):
 
-    conn = get_connection()
+    conn = get_destination_connection()
     cursor = conn.cursor()
 
     query = f"""

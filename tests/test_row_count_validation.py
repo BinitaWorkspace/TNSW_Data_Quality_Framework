@@ -1,11 +1,23 @@
-from src.validation.count_check import validate_all_row_counts
+import pytest
+
+from src.validation.source_target_count_validation import validate_row_count
 
 
-def test_row_counts():
+tables = [
+    "PASSENGER",
+    "TRIP",
+    "BOOKING"
+]
 
-    results = validate_all_row_counts()
 
-    for result in results:
-        print(result)
+@pytest.mark.parametrize(
+    "table",
+    tables
+)
+def test_row_counts(table):
 
-        assert "FAIL" not in result
+    result = validate_row_count(table)
+
+    print(result)
+
+    assert result["status"] != "FAIL"
