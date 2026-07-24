@@ -1,9 +1,13 @@
-from src.validation.duplicate_check import validate_all_duplicates
+@pytest.mark.parametrize(
+    "duplicate_check",
+    config["duplicate_checks"]
+)
+def test_duplicate_checks(cursor, duplicate_check):
 
+    result = check_duplicate_records(
+        cursor,
+        duplicate_check["table"],
+        duplicate_check["column"]
+    )
 
-def test_duplicate_validation():
-
-    results = validate_all_duplicates()
-
-    for result in results:
-        assert "FAIL" not in result
+    assert result == "PASS"

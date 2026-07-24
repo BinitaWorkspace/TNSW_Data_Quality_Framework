@@ -1,75 +1,97 @@
-database:
-  schema: TFNSW_TEST
+  import sys
+    import os
+    import pytest
+    
+    sys.path.append(
+    os.path.abspath(
+    os.path.join(
+    os.path.dirname(__file__),
+    ".."
+    )
+    )
+    )
+    
+    
+    from src.connection.destination_connection import get_destination_connection
+    
+    from src.validation.data_quality import (
+    check_table_exists,
+    check_row_count,
+    check_null_values,
+    check_duplicate_records
+    )
+    
+    from src.utils.config_loader import load_config
+    
+    
+    config = load_config()
+    
+    
+    @pytest.fixture(scope="module")
+  def cursor():
 
-tables:
-  - PASSENGER
-  - TRIP
-  - BOOKING
-  - STATION
+    connection = get_destination_connection()
+    cursor = connection.cursor()
 
+    yield cursor
 
-row_count_checks:
-  - PASSENGER
-  - TRIP
-  - BOOKING
-  - STATION
+    cursor.close()
+    connection.close()
+    
+    
+    @pytest.mark.parametrize(
+    "table_name",
+    config["tables"]
+    )
+  def test_table_exists(cursor, table_name):
 
+    result = check_table_exists(
+    cursor,
+    table_name
+    )
 
-duplicate_checks:
+    assert result == "PASS"
+    
+    
+    @pytest.mark.parametrize(
+    "table_name",
+    config["row_count_checks"]
+    )
+  def test_row_count(cursor, table_name):
 
-  - table: PASSENGER
-    column: PASSENGER_ID
+    result = check_row_count(
+    cursor,
+    table_name
+    )
 
-  - table: TRIP
-    column: TRIP_ID
+    assert result == "PASS"
+    
+    
+    @pytest.mark.parametrize(
+    "null_check",
+    config["null_checks"]
+    )
+  def test_null_checks(cursor, null_check):
 
-  - table: BOOKING
-    column: BOOKING_ID
+    result = check_null_values(
+    cursor,
+    null_check["table"],
+    null_check["column"]
+    )
 
-  - table: STATION
-    column: STATION_ID
+    assert result == "PASS"
+    
+    
+    @pytest.mark.parametrize(
+    "duplicate_check",
+    config["duplicate_checks"]
+    )
+  def test_duplicate_checks(cursor, duplicate_check):
 
+    result = check_duplicate_records(
+    cursor,
+    duplicate_check["table"],
+    duplicate_check["column"]
+    )
 
-null_checks:
-
-  - table: PASSENGER
-    column: PASSENGER_ID
-
-  - table: PASSENGER
-    column: EMAIL
-
-  - table: BOOKING
-    column: BOOKING_ID
-
-  - table: BOOKING
-    column: TICKET_PRICE
-
-  - table: TRIP
-    column: TRIP_ID
-
-  - table: STATION
-    column: STATION_ID
-
-
-relationship_checks:
-
-  - parent_table: TRIP
-    parent_column: TRIP_ID
-    child_table: BOOKING
-    child_column: TRIP_ID
-
-
-  - parent_table: PASSENGER
-    parent_column: PASSENGER_ID
-    child_table: BOOKING
-    child_column: PASSENGER_ID
-
-
-business_rules:
-
-  - table: BOOKING
-    rule: "TICKET_PRICE > 0"
-
-
-  - table: BOOKING
-    rule: "STATUS IN ('CONFIRMED','CANCELLED')"
+    assert result == "PASS"

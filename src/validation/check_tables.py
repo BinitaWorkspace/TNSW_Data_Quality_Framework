@@ -1,52 +1,45 @@
-from src.connection.oracle_connection import get_connection
+from src.connection.source_connection import get_source_connection
+from src.connection.destination_connection import get_destination_connection
 
 
-def check_tables():
+def check_table_exists(table_name):
 
-    conn = get_connection()
-    cursor = conn.cursor()
+    source_conn = get_source_connection()
+    target_conn = get_destination_connection()
 
-    cursor.execute("""
-        SELECT table_name
-        FROM user_tables
-        ORDER BY table_name
-    """)
+    source_cursor = source_conn.cursor()
+    target_cursor = target_conn.cursor()
 
-    tables = cursor.fetchall()
+    source_cursor.execute("""
+    SELECT COUNT(*)
+    FROM USER_TABLES
+    WHERE TABLE_NAME = :tbl_name
+    """, {"tbl_name": table_name.upper()})
 
-    cursor.close()
-    conn.close()
-
-    return [table[0] for table in tables]
+    source_exists = source_cursor.fetchone()[0] > 0
 
 
-def validate_tables_exist():
+    target_cursor.execute(
+        """
+        SELECT COUNT(*)
+        FROM USER_TABLES
+        WHERE TABLE_NAME = :tbl_name
+        """,
+        {"tbl_name": table_name.upper()}
+    )
 
-    expected_tables = [
-        "PASSENGER",
-        "TRIP",
-        "BOOKING",
-        "STATION"
-    ]
-
-    existing_tables = check_tables()
-
-    missing_tables = [
-        table for table in expected_tables
-        if table not in existing_tables
-    ]
-
-    if not missing_tables:
-        return "PASS - All expected tables exist"
-
-    return f"FAIL - Missing tables: {missing_tables}"
+    target_exists = target_cursor.fetchone()[0] > 0
 
 
-if __name__ == "__main__":
+    source_conn.close()
+    target_conn.close()
 
-    print("Tables in TFNSW_TEST schema:")
 
-    for table in check_tables():
-        print(table)
-
-    print(validate_tables_exist())
+    return {
+        "table": table_name,
+        "source_exists": source_exists,
+        "target_exists": target_exists,
+        "status": "PASS"
+        if source_exists and target_exists
+        else "FAIL"
+    }
